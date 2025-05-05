@@ -6,26 +6,31 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <h1>Manga Tracker</h1>
 
-  <!-- 🔍 Search -->
-  <input type="text" id="search-input" placeholder="Search manga...">
+  <!-- 🔐 Auth Buttons -->
+  <div id="auth-buttons">
+    <button id="login-btn">Sign in with Google</button>
+    <button id="logout-btn" style="display: none;">Log Out</button>
+  </div>
 
-  <!-- ➕ Form -->
-  <form id="manga-form">
+  <!-- 🔍 Search -->
+  <input type="text" id="search-input" placeholder="Search manga..." style="display: none;">
+
+  <!-- ➕ Add/Edit Manga -->
+  <form id="manga-form" style="display: none;">
     <input type="text" id="manga-name" placeholder="Manga Name" required>
     <input type="number" id="chapter" placeholder="Chapter" required>
     <button type="submit">Add Manga</button>
   </form>
 
-  <!-- 📚 List -->
+  <!-- 📚 Manga List -->
   <ul id="manga-list"></ul>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js"></script>
   <script src="script.js" type="module"></script>
 </body>
 </html>
