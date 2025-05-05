@@ -3,13 +3,13 @@ import {
   getDatabase,
   ref,
   push,
-  onValue,
-  remove
+  update,
+  remove,
+  onValue
 } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 import {
   getAuth,
-  signInAnonymously,
-  onAuthStateChanged
+  signInAnonymously
 } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
 
 const firebaseConfig = {
@@ -33,7 +33,7 @@ const form = document.getElementById("manga-form");
 const list = document.getElementById("manga-list");
 const searchInput = document.getElementById("search-input");
 
-let fullMangaList = []; // Cached entries
+let fullMangaList = [];
 
 signInAnonymously(auth).then(() => {
   onValue(mangaRef, (snapshot) => {
@@ -50,11 +50,22 @@ signInAnonymously(auth).then(() => {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = document.getElementById("manga-name").value.trim();
-  const chapter = document.getElementById("chapter").value.trim();
+  const nameInput = document.getElementById("manga-name");
+  const chapterInput = document.getElementById("chapter");
+  const editId = form.getAttribute("data-edit-id");
+
+  const name = nameInput.value.trim();
+  const chapter = chapterInput.value.trim();
   if (!name || !chapter) return;
 
-  await push(mangaRef, { name, chapter });
+  if (editId) {
+    await update(ref(db, `manga/${editId}`), { name, chapter });
+    form.removeAttribute("data-edit-id");
+    form.querySelector("button").textContent = "Add Manga";
+  } else {
+    await push(mangaRef, { name, chapter });
+  }
+
   form.reset();
 });
 
@@ -74,16 +85,29 @@ function renderMangaList(mangaArray) {
 
   mangaArray.forEach((item) => {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>${item.name}</strong> – Chapter ${item.chapter} 
-      <button data-id="${item.id}" class="delete-btn">🗑 Delete</button>`;
+    li.innerHTML = `
+      <strong>${item.name}</strong> – Chapter ${item.chapter}
+      <button data-id="${item.id}" class="edit-btn">✏️ Edit</button>
+      <button data-id="${item.id}" class="delete-btn">🗑 Delete</button>
+    `;
     list.appendChild(li);
   });
 
-  // Add delete button logic
   document.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
       await remove(ref(db, `manga/${id}`));
+    });
+  });
+
+  document.querySelectorAll(".edit-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      const manga = fullMangaList.find(m => m.id === id);
+      document.getElementById("manga-name").value = manga.name;
+      document.getElementById("chapter").value = manga.chapter;
+      form.setAttribute("data-edit-id", id);
+      form.querySelector("button").textContent = "Update Manga";
     });
   });
 }
