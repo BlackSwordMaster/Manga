@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manga Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Manga Tracker</h1>
+  <form id="manga-form">
+    <input type="text" id="manga-name" placeholder="Manga Name" required>
+    <input type="number" id="chapter" placeholder="Chapter" required>
+    <button type="submit">Add Manga</button>
+  </form>
+  <ul id="manga-list"></ul>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js"></script>
+  <script src="script.js" type="module"></script>
+</body>
+</html>
+
