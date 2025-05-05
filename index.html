@@ -1,22 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Manga Tracker</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <h1>Manga Tracker</h1>
+
+  <!-- 🔍 Search Bar -->
+  <input type="text" id="search-input" placeholder="Search manga...">
+
+  <!-- 📝 Manga Input Form -->
   <form id="manga-form">
     <input type="text" id="manga-name" placeholder="Manga Name" required>
     <input type="number" id="chapter" placeholder="Chapter" required>
     <button type="submit">Add Manga</button>
   </form>
+
+  <!-- 📚 Manga List -->
   <ul id="manga-list"></ul>
 
-  <!-- Firebase -->
+  <!-- ✅ Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js"></script>
+
+  <!-- 📜 Your JavaScript -->
   <script src="script.js" type="module"></script>
+
 </body>
 </html>
-
