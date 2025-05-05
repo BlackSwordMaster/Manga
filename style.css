@@ -1,37 +1,37 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background: #f2f2f2;
-  }
-  form {
-    margin-bottom: 20px;
-  }
-  input, button {
-    padding: 10px;
-    margin: 5px;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    background: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-#search-input {
-  padding: 10px;
-  width: 100%;
-  margin-bottom: 15px;
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f4f4f4;
 }
-
-.delete-btn {
+form, input {
+  margin-bottom: 10px;
+}
+input, button {
+  padding: 8px;
+  margin: 5px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  background: white;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+.delete-btn, .edit-btn {
   margin-left: 10px;
-  background-color: red;
-  color: white;
   border: none;
-  padding: 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
-  border-radius: 4px;
+}
+.delete-btn {
+  background: crimson;
+  color: white;
+}
+.edit-btn {
+  background: dodgerblue;
+  color: white;
 }
