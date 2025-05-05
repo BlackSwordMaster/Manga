@@ -9,7 +9,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 import {
   getAuth,
-  signInAnonymously
+  signInAnonymously,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
 
 const firebaseConfig = {
@@ -23,28 +24,35 @@ const firebaseConfig = {
   measurementId: "G-5KQM3MWW9Q"
 };
 
-// Firebase init
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
-const mangaRef = ref(db, "manga");
 
 const form = document.getElementById("manga-form");
 const list = document.getElementById("manga-list");
 const searchInput = document.getElementById("search-input");
 
 let fullMangaList = [];
+let mangaRef = null;
 
 signInAnonymously(auth).then(() => {
-  onValue(mangaRef, (snapshot) => {
-    const data = snapshot.val();
-    fullMangaList = [];
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const userId = user.uid;
+      mangaRef = ref(db, `users/${userId}/manga`);
 
-    for (let id in data) {
-      fullMangaList.push({ id, ...data[id] });
+      // Load data
+      onValue(mangaRef, (snapshot) => {
+        const data = snapshot.val();
+        fullMangaList = [];
+
+        for (let id in data) {
+          fullMangaList.push({ id, ...data[id] });
+        }
+
+        renderMangaList(fullMangaList);
+      });
     }
-
-    renderMangaList(fullMangaList);
   });
 });
 
@@ -59,7 +67,7 @@ form.addEventListener("submit", async (e) => {
   if (!name || !chapter) return;
 
   if (editId) {
-    await update(ref(db, `manga/${editId}`), { name, chapter });
+    await update(ref(db, `${mangaRef.path.pieces_.join('/')}/${editId}`), { name, chapter });
     form.removeAttribute("data-edit-id");
     form.querySelector("button").textContent = "Add Manga";
   } else {
@@ -80,7 +88,7 @@ searchInput.addEventListener("input", (e) => {
 function renderMangaList(mangaArray) {
   list.innerHTML = "";
 
-  // Sort alphabetically
+  // Alphabetical sort
   mangaArray.sort((a, b) => a.name.localeCompare(b.name));
 
   mangaArray.forEach((item) => {
@@ -96,7 +104,7 @@ function renderMangaList(mangaArray) {
   document.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = btn.getAttribute("data-id");
-      await remove(ref(db, `manga/${id}`));
+      await remove(ref(db, `${mangaRef.path.pieces_.join('/')}/${id}`));
     });
   });
 
