@@ -4,7 +4,6 @@ import {
   ref,
   push,
   update,
-  remove,
   onValue
 } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-database.js";
 import {
@@ -60,11 +59,11 @@ onAuthStateChanged(auth, (user) => {
         fullMangaList.push({ id, ...data[id] });
       }
 
-      renderMangaList(fullMangaList);
+      renderMangaList(fullMangaList, userId);
     });
   } else {
     fullMangaList = [];
-    renderMangaList([]);
+    renderMangaList([], null);
     loginBtn.style.display = "inline-block";
     logoutBtn.style.display = "none";
     form.style.display = "none";
@@ -76,15 +75,15 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const nameInput = document.getElementById("manga-name");
   const chapterInput = document.getElementById("chapter");
-  const editId = form.getAttribute("data-edit-id");
+  const editPath = form.getAttribute("data-edit-path");
 
   const name = nameInput.value.trim();
   const chapter = chapterInput.value.trim();
   if (!name || !chapter) return;
 
-  if (editId) {
-    await update(ref(db, `${mangaRef.path.pieces_.join('/')}/${editId}`), { name, chapter });
-    form.removeAttribute("data-edit-id");
+  if (editPath) {
+    await update(ref(db, editPath), { name, chapter });
+    form.removeAttribute("data-edit-path");
     form.querySelector("button").textContent = "Add Manga";
   } else {
     await push(mangaRef, { name, chapter });
@@ -98,10 +97,10 @@ searchInput.addEventListener("input", (e) => {
   const filtered = fullMangaList.filter((item) =>
     item.name.toLowerCase().includes(keyword)
   );
-  renderMangaList(filtered);
+  renderMangaList(filtered, auth.currentUser?.uid);
 });
 
-function renderMangaList(mangaArray) {
+function renderMangaList(mangaArray, userId) {
   list.innerHTML = "";
   mangaArray.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -109,8 +108,8 @@ function renderMangaList(mangaArray) {
     const li = document.createElement("li");
     li.innerHTML = `
       <strong>${item.name}</strong> – Chapter ${item.chapter}
-      <button data-id="${item.id}" class="edit-btn">✏️ Edit</button>`
-      ;
+      <button data-id="${item.id}" class="edit-btn">✏️ Edit</button>
+    `;
     list.appendChild(li);
   });
 
@@ -120,20 +119,8 @@ function renderMangaList(mangaArray) {
       const manga = fullMangaList.find((m) => m.id === id);
       document.getElementById("manga-name").value = manga.name;
       document.getElementById("chapter").value = manga.chapter;
-      form.setAttribute("data-edit-id", id);
+      form.setAttribute("data-edit-path", `users/${userId}/manga/${id}`);
       form.querySelector("button").textContent = "Update Manga";
     });
   });
 }
-
-  document.querySelectorAll(".edit-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-id");
-      const manga = fullMangaList.find((m) => m.id === id);
-      document.getElementById("manga-name").value = manga.name;
-      document.getElementById("chapter").value = manga.chapter;
-      form.setAttribute("data-edit-id", id);
-      form.querySelector("button").textContent = "Update Manga";
-    });
-  });
-
