@@ -109,17 +109,9 @@ function renderMangaList(mangaArray) {
     const li = document.createElement("li");
     li.innerHTML = `
       <strong>${item.name}</strong> – Chapter ${item.chapter}
-      <button data-id="${item.id}" class="edit-btn">✏️ Edit</button>
-      <button data-id="${item.id}" class="delete-btn">🗑 Delete</button>
-    `;
+      <button data-id="${item.id}" class="edit-btn">✏️ Edit</button>`
+      ;
     list.appendChild(li);
-  });
-
-  document.querySelectorAll(".delete-btn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-id");
-      await remove(ref(db, `${mangaRef.path.pieces_.join('/')}/${id}`));
-    });
   });
 
   document.querySelectorAll(".edit-btn").forEach((btn) => {
@@ -133,3 +125,15 @@ function renderMangaList(mangaArray) {
     });
   });
 }
+
+  document.querySelectorAll(".edit-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      const manga = fullMangaList.find((m) => m.id === id);
+      document.getElementById("manga-name").value = manga.name;
+      document.getElementById("chapter").value = manga.chapter;
+      form.setAttribute("data-edit-id", id);
+      form.querySelector("button").textContent = "Update Manga";
+    });
+  });
+
