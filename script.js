@@ -104,6 +104,16 @@ function renderMangaList(mangaArray, userId) {
   list.innerHTML = "";
   mangaArray.sort((a, b) => a.name.localeCompare(b.name));
 
+  // Update manga count
+  const countText = document.getElementById("manga-count");
+  const countValue = document.getElementById("count");
+  if (mangaArray.length > 0) {
+    countText.style.display = "block";
+    countValue.textContent = mangaArray.length;
+  } else {
+    countText.style.display = "none";
+  }
+
   mangaArray.forEach((item) => {
     const li = document.createElement("li");
     li.innerHTML = `
